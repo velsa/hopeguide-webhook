@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "target": "esnext",
+    "module": "esnext",
+    "paths": {
+      "notion-sdk": [
+        "./notion-sdk/"
+      ],
+    },
+    "lib": [
+      "esnext"
+    ],
+    "types": [
+      "jest",
+      "node"
+    ],
+  },
+  "include": [
+    "**/*.ts",
+    "proxy/src/page-script.js",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".eslintrc.js",
+  ]
+}

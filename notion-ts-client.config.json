@@ -1,0 +1,133 @@
+{
+  "ignore": [
+    {
+      "name": "Raffle test",
+      "id": "ca8b8ec9-52bc-4578-99cd-fcbe50d52da3"
+    },
+    {
+      "name": "🎫 DB - Afisha",
+      "id": "70b2b25b-7f43-4306-b508-9486de5efced"
+    },
+    {
+      "name": "DB - Подписки на уведомления",
+      "id": "139c71e3-ba5a-4a97-9479-83661b4ce073"
+    }
+  ],
+  "databases": {
+    "09a20534-4b42-4808-bd28-bfd999605a37": {
+      "_name": "Вакансии организации ",
+      "varName": "vacancies",
+      "pathName": "vacancies",
+      "properties": {
+        "%3Ae%7C%3E": {
+          "_name": "Время. Комментарий",
+          "_type": "rich_text",
+          "varName": "timeComment",
+          "readOnly": false
+        },
+        "%3BV%3DD": {
+          "_name": "Доступные даты",
+          "_type": "status",
+          "varName": "availableDates",
+          "readOnly": false
+        },
+        "AiTY": {
+          "_name": "Адрес",
+          "_type": "rich_text",
+          "varName": "address",
+          "readOnly": false
+        },
+        "DGzD": {
+          "_name": "Срочность",
+          "_type": "status",
+          "varName": "urgency",
+          "readOnly": false
+        },
+        "FBFv": {
+          "_name": "Published",
+          "_type": "status",
+          "varName": "published",
+          "readOnly": false
+        },
+        "OQaw": {
+          "_name": "Дата начала ",
+          "_type": "date",
+          "varName": "startDate",
+          "readOnly": false
+        },
+        "WUqP": {
+          "_name": "Контакт для HopeGuide",
+          "_type": "rich_text",
+          "varName": "contactForHopeGuide",
+          "readOnly": false
+        },
+        "%5Ddi%7D": {
+          "_name": "Description_ AI translation",
+          "_type": "rich_text",
+          "varName": "descriptionAiTranslation",
+          "readOnly": false
+        },
+        "ejJ%40": {
+          "_name": "Актуально до",
+          "_type": "date",
+          "varName": "relevantUntil",
+          "readOnly": false
+        },
+        "h~Bl": {
+          "_name": "Short description_AI translation",
+          "_type": "rich_text",
+          "varName": "shortDescriptionAiTranslation",
+          "readOnly": false
+        },
+        "pBVY": {
+          "_name": "Как связаться",
+          "_type": "rich_text",
+          "varName": "howToContact",
+          "readOnly": false
+        },
+        "xlfj": {
+          "_name": "Фото от организации",
+          "_type": "files",
+          "varName": "photoFromOrganization",
+          "readOnly": false
+        },
+        "zk~U": {
+          "_name": "Подробное описание вакансии",
+          "_type": "rich_text",
+          "varName": "detailedDescription",
+          "readOnly": false
+        },
+        "title": {
+          "_name": "Описание вакансии",
+          "_type": "title",
+          "varName": "description",
+          "readOnly": false
+        },
+        "N%7Db%5E": {
+          "_name": "NoteMate logs",
+          "_type": "rich_text",
+          "varName": "noteMateLogs",
+          "readOnly": false
+        },
+        "U_FE": {
+          "_name": "Created by",
+          "_type": "created_by",
+          "varName": "createdBy",
+          "readOnly": true
+        },
+        "d%3FC%5E": {
+          "_name": "Редактор",
+          "_type": "last_edited_by",
+          "varName": "editedBy",
+          "readOnly": true
+        },
+        "oOFV": {
+          "_name": "Обновлено",
+          "_type": "last_edited_time",
+          "varName": "lastEditedTime",
+          "readOnly": true
+        }
+      }
+    }
+  }
+}

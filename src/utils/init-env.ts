@@ -1,0 +1,11 @@
+import { g } from 'utils/g'
+
+export function initEnv() {
+  g.env = {
+    NOTION_API_SECRET: process.env.NOTION_API_SECRET,
+    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+    CLOUDFLARE_IMAGES_SECRET: process.env.CLOUDFLARE_IMAGES_SECRET,
+    CLOUDFLARE_IMAGES_ACCOUNT: process.env.CLOUDFLARE_IMAGES_ACCOUNT,
+    CLOUDFLARE_IMAGES_CUSTOM_DOMAIN: process.env.CLOUDFLARE_IMAGES_CUSTOM_DOMAIN,
+  }
+}
