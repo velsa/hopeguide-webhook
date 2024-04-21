@@ -15,7 +15,6 @@ QueryDatabaseBodyParameters,
 TimestampCreatedTimeFilter,
 TimestampLastEditedTimeFilter,
 DatePropertyFilter,
-FilesPropertyFilter,
 PeoplePropertyFilter,
 StatusPropertyFilter,
 TextPropertyFilter
@@ -92,7 +91,7 @@ type VacanciesDescriptionAiTranslationPropertyFilter = TextPropertyFilter
 type VacanciesRelevantUntilPropertyFilter = DatePropertyFilter
 type VacanciesShortDescriptionAiTranslationPropertyFilter = TextPropertyFilter
 type VacanciesHowToContactPropertyFilter = TextPropertyFilter
-type VacanciesPhotoFromOrganizationPropertyFilter = ExistancePropertyFilter
+type VacanciesPhotoFromOrganizationPropertyFilter = ExistencePropertyFilter
 type VacanciesDetailedDescriptionPropertyFilter = TextPropertyFilter
 type VacanciesDescriptionPropertyFilter = TextPropertyFilter
 type VacanciesNoteMateLogsPropertyFilter = TextPropertyFilter

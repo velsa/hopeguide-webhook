@@ -201,8 +201,10 @@ export abstract class GenericDatabaseClass<
     })
 
     if (!res.ok) {
-      console.error(await res.json())
-      throw new Error(`Failed to create page in database (${this.notionDatabaseId}): ${res.status} ${res.statusText}`)
+      const error = `Failed to create page in database (${this.notionDatabaseId}): ${res.status} ${res.statusText}`
+
+      console.error(error, await res.json())
+      throw new Error(error)
     }
 
     return await res.json()

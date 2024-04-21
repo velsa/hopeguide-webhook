@@ -15,7 +15,7 @@
   ],
   "databases": {
     "09a20534-4b42-4808-bd28-bfd999605a37": {
-      "_name": "Вакансии организации ",
+      "_name": "Актуальные вакансии ",
       "varName": "vacancies",
       "pathName": "vacancies",
       "properties": {
