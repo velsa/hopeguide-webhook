@@ -2,7 +2,7 @@ import { VacanciesResponse, VacanciesResponseDTO } from 'notion-sdk/dbs/vacancie
 import { initEnv } from 'utils/init-env'
 import { writeLogsToPage } from 'utils/logs'
 import { g } from '../utils/g'
-import { handleRelevantUntil } from './handle-relevant-until'
+import { calcRelevantUntil, handleRelevantUntil } from './handle-relevant-until'
 
 export async function handleGuideWebhook(data: VacanciesResponse): Promise<void> {
   const page = new VacanciesResponseDTO(data)
@@ -17,15 +17,8 @@ export async function handleGuideWebhook(data: VacanciesResponse): Promise<void>
   console.log(`${data.id} handleGuideWebhook:`, props.description.text)
   // console.log(`${data.id} handleGuideWebhook:`, JSON.stringify(data))
 
-  // If we have a FB event, we can update the address and date props
-  // Otherwise, we update date if addToCalendar is not a URL
-  // Update date dependant props: dayOfWeek, addToCalendar
-  const maxRelevantUntil = new Date(props.lastEditedTime)
-
-  maxRelevantUntil.setDate(maxRelevantUntil.getDate() + 30)
-  maxRelevantUntil.setHours(0, 0, 0, 0)
-
-  if (!props.relevantUntil.start || new Date(props.relevantUntil.start) < maxRelevantUntil) {
+  // Update relevantUntil if the record was edited
+  if (!props.relevantUntil.start || new Date(props.relevantUntil.start) < calcRelevantUntil(props.lastEditedTime)) {
     await handleRelevantUntil(data)
   }
 
