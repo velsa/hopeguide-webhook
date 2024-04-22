@@ -20,10 +20,14 @@ export async function handleGuideWebhook(data: VacanciesResponse): Promise<void>
   // If we have a FB event, we can update the address and date props
   // Otherwise, we update date if addToCalendar is not a URL
   // Update date dependant props: dayOfWeek, addToCalendar
-  if (
-    !props.relevantUntil.start ||
-    new Date(props.relevantUntil.start).getTime() < Date.now() + 1000 * 60 * 60 * 24 * 30
-  ) {
+  const maxRelevantUntil = new Date(props.lastEditedTime)
+
+  maxRelevantUntil.setDate(maxRelevantUntil.getDate() + 30)
+
+  if (!props.relevantUntil.start || new Date(props.relevantUntil.start) < maxRelevantUntil) {
+    console.log(props.relevantUntil.start)
+    console.log(props.lastEditedTime)
+    console.log(maxRelevantUntil)
     await handleRelevantUntil(data)
   }
 
