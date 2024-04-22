@@ -29,7 +29,7 @@ export async function writeLogsToPage(pageId: string, page: VacanciesResponseDTO
     const logsRichText = [...prevLogsRichText, ...newLogsRichText].slice(-10)
 
     // console.log(`${pageId} writeLogsToPage:`, logsRichText)
-    console.log(`${pageId} updated page logs`)
+    console.log(`${pageId} updating page logs...`)
 
     await db.updatePage(
       pageId,
