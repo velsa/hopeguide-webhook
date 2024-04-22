@@ -26,9 +26,6 @@ export async function handleGuideWebhook(data: VacanciesResponse): Promise<void>
   maxRelevantUntil.setHours(0, 0, 0, 0)
 
   if (!props.relevantUntil.start || new Date(props.relevantUntil.start) < maxRelevantUntil) {
-    console.log(props.relevantUntil.start)
-    console.log(props.lastEditedTime)
-    console.log(maxRelevantUntil)
     await handleRelevantUntil(data)
   }
 
