@@ -8,6 +8,7 @@ export async function handleRelevantUntil(data: VacanciesResponse) {
   const relevantUntil = new Date(props.lastEditedTime)
 
   relevantUntil.setDate(relevantUntil.getDate() + 30)
+  relevantUntil.setHours(0, 0, 0, 0)
 
   console.log(
     `${data.id} handleRelevantUntil: change ${props.relevantUntil.start} to ${formatISO(relevantUntil, {
