@@ -9,7 +9,7 @@ export interface VacanciesDiff {
   }
 }
 
-export function diffEvents(newRecord: VacanciesResponse, oldRecord: VacanciesResponse) {
+export function diffVacancies(newRecord: VacanciesResponse, oldRecord: VacanciesResponse) {
   // console.log(`Checking diff for record ${oldRecord.id}`)
 
   const changes: VacanciesDiff = {
@@ -30,7 +30,7 @@ export function diffEvents(newRecord: VacanciesResponse, oldRecord: VacanciesRes
     const newProp = Object.values(newRecord.properties).find((prop) => prop.id === oldProp.id)
     const propName = VACANCIES_IDS_TO_PROPS[newProp.id]
 
-    if (!propName && (newProp.type as string) !== 'relation') {
+    if (!propName && !['rollup', 'relation'].includes(newProp.type)) {
       console.error(`Unknown prop id ${oldProp.id}`)
       console.error('oldProp:', oldProp)
       console.error('newProp:', newProp)
