@@ -5,10 +5,10 @@ import { g } from '../utils/g'
 export async function handleRelevantUntil(data: VacanciesResponse) {
   const db = new VacanciesDatabase({ notionSecret: g.env.NOTION_API_SECRET })
   const props = new VacanciesResponseDTO(data).properties
-  const relevantUntil = calcRelevantUntil(props.lastEditedTime)
+  const newRelevantUntil = calcRelevantUntil(props.startDate.start)
 
   console.log(
-    `${data.id} handleRelevantUntil: change ${props.relevantUntil.start} to ${formatISO(relevantUntil, {
+    `${data.id} handleRelevantUntil: change ${props.relevantUntil.start} to ${formatISO(newRelevantUntil, {
       representation: 'date',
     })}`,
   )
@@ -16,7 +16,7 @@ export async function handleRelevantUntil(data: VacanciesResponse) {
   const patch = new VacanciesPatchDTO({
     properties: {
       relevantUntil: {
-        start: formatISO(relevantUntil, { representation: 'date' }),
+        start: formatISO(newRelevantUntil, { representation: 'date' }),
       },
     },
   })

@@ -18,7 +18,7 @@ export async function handleGuideWebhook(data: VacanciesResponse): Promise<void>
   // console.log(`${data.id} handleGuideWebhook:`, JSON.stringify(data))
 
   // Update relevantUntil if the record was edited
-  if (!props.relevantUntil.start || new Date(props.relevantUntil.start) < calcRelevantUntil(props.lastEditedTime)) {
+  if (!props.startDate.start || new Date(props.startDate.start) < calcRelevantUntil(props.relevantUntil.start)) {
     await handleRelevantUntil(data)
   }
 
