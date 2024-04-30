@@ -40,7 +40,8 @@ export interface VacanciesResponse extends WithOptional<Omit<DatabaseObjectRespo
     "NoteMate logs": RichTextPropertyItemObjectResponse,
     "Created by": CreatedByPropertyItemObjectResponse,
     "Редактор": LastEditedByPropertyItemObjectResponse,
-    "Обновлено": LastEditedTimePropertyItemObjectResponse
+    "Обновлено": LastEditedTimePropertyItemObjectResponse,
+    "Last edited by": LastEditedByPropertyItemObjectResponse
   }
 }
 
@@ -98,8 +99,9 @@ type VacanciesNoteMateLogsPropertyFilter = TextPropertyFilter
 type VacanciesCreatedByPropertyFilter = PeoplePropertyFilter
 type VacanciesEditedByPropertyFilter = PeoplePropertyFilter
 type VacanciesLastEditedTimePropertyFilter = DatePropertyFilter
+type VacanciesLastEditedByPropertyFilter = PeoplePropertyFilter
 
-export type VacanciesPropertyFilter = { timeComment: VacanciesTimeCommentPropertyFilter } | { availableDates: VacanciesAvailableDatesPropertyFilter } | { address: VacanciesAddressPropertyFilter } | { urgency: VacanciesUrgencyPropertyFilter } | { published: VacanciesPublishedPropertyFilter } | { startDate: VacanciesStartDatePropertyFilter } | { contactForHopeGuide: VacanciesContactForHopeGuidePropertyFilter } | { descriptionAiTranslation: VacanciesDescriptionAiTranslationPropertyFilter } | { relevantUntil: VacanciesRelevantUntilPropertyFilter } | { shortDescriptionAiTranslation: VacanciesShortDescriptionAiTranslationPropertyFilter } | { howToContact: VacanciesHowToContactPropertyFilter } | { photoFromOrganization: VacanciesPhotoFromOrganizationPropertyFilter } | { detailedDescription: VacanciesDetailedDescriptionPropertyFilter } | { description: VacanciesDescriptionPropertyFilter } | { noteMateLogs: VacanciesNoteMateLogsPropertyFilter } | { createdBy: VacanciesCreatedByPropertyFilter } | { editedBy: VacanciesEditedByPropertyFilter } | { lastEditedTime: VacanciesLastEditedTimePropertyFilter }
+export type VacanciesPropertyFilter = { timeComment: VacanciesTimeCommentPropertyFilter } | { availableDates: VacanciesAvailableDatesPropertyFilter } | { address: VacanciesAddressPropertyFilter } | { urgency: VacanciesUrgencyPropertyFilter } | { published: VacanciesPublishedPropertyFilter } | { startDate: VacanciesStartDatePropertyFilter } | { contactForHopeGuide: VacanciesContactForHopeGuidePropertyFilter } | { descriptionAiTranslation: VacanciesDescriptionAiTranslationPropertyFilter } | { relevantUntil: VacanciesRelevantUntilPropertyFilter } | { shortDescriptionAiTranslation: VacanciesShortDescriptionAiTranslationPropertyFilter } | { howToContact: VacanciesHowToContactPropertyFilter } | { photoFromOrganization: VacanciesPhotoFromOrganizationPropertyFilter } | { detailedDescription: VacanciesDetailedDescriptionPropertyFilter } | { description: VacanciesDescriptionPropertyFilter } | { noteMateLogs: VacanciesNoteMateLogsPropertyFilter } | { createdBy: VacanciesCreatedByPropertyFilter } | { editedBy: VacanciesEditedByPropertyFilter } | { lastEditedTime: VacanciesLastEditedTimePropertyFilter } | { lastEditedBy: VacanciesLastEditedByPropertyFilter }
 
 export type VacanciesQuery = Omit<QueryDatabaseBodyParameters, 'filter' | 'sorts'> & {
   sorts?: Array<

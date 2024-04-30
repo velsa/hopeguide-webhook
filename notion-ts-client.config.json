@@ -126,6 +126,12 @@
           "_type": "last_edited_time",
           "varName": "lastEditedTime",
           "readOnly": true
+        },
+        "Zufl": {
+          "_name": "Last edited by",
+          "_type": "last_edited_by",
+          "varName": "lastEditedBy",
+          "readOnly": true
         }
       }
     }

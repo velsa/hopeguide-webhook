@@ -7,8 +7,8 @@ import { initEnv } from '../utils/init-env'
 describe('Afisha Handlers Tests', () => {
   let db: VacanciesDatabase
 
-  beforeAll(() => {
-    initEnv()
+  beforeAll(async () => {
+    await initEnv()
     db = new VacanciesDatabase({ notionSecret: g.env.NOTION_API_SECRET })
   })
 

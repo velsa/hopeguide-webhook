@@ -18,7 +18,7 @@ app.post('/', async (request: Request, res: Response) => {
   console.log('Received Webhook:', request.body)
 
   // Store env in global for use in other modules
-  initEnv()
+  await initEnv()
 
   try {
     await handleGuideWebhook(request.body as VacanciesResponse)

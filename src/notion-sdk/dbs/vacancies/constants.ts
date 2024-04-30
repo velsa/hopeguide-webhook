@@ -33,7 +33,8 @@ export const VACANCIES_PROPS_TO_IDS = {
   "noteMateLogs": "N%7Db%5E",
   "createdBy": "U_FE",
   "editedBy": "d%3FC%5E",
-  "lastEditedTime": "oOFV"
+  "lastEditedTime": "oOFV",
+  "lastEditedBy": "Zufl"
 } as const
 export const VACANCIES_IDS_TO_PROPS = {
   "%3Ae%7C%3E": "timeComment",
@@ -53,7 +54,8 @@ export const VACANCIES_IDS_TO_PROPS = {
   "N%7Db%5E": "noteMateLogs",
   "U_FE": "createdBy",
   "d%3FC%5E": "editedBy",
-  "oOFV": "lastEditedTime"
+  "oOFV": "lastEditedTime",
+  "Zufl": "lastEditedBy"
 } as const
 export const VACANCIES_PROPS_TO_TYPES = {
   "timeComment": "rich_text",
@@ -73,7 +75,8 @@ export const VACANCIES_PROPS_TO_TYPES = {
   "noteMateLogs": "rich_text",
   "createdBy": "created_by",
   "editedBy": "last_edited_by",
-  "lastEditedTime": "last_edited_time"
+  "lastEditedTime": "last_edited_time",
+  "lastEditedBy": "last_edited_by"
 } as const
 
   export type VacanciesDTOProperties = keyof typeof VACANCIES_PROPS_TO_IDS

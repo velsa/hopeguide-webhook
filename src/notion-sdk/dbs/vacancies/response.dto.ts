@@ -79,6 +79,7 @@ export class VacanciesPropertiesResponseDTO {
       createdBy: this.__props['Created by'],
       editedBy: this.__props['Редактор'],
       lastEditedTime: this.__props['Обновлено'],
+      lastEditedBy: this.__props['Last edited by'],
     }
   }
 
@@ -189,5 +190,9 @@ export class VacanciesPropertiesResponseDTO {
 
   get lastEditedTime() {
     return this.__props['Обновлено']?.last_edited_time
+  }
+
+  get lastEditedBy() {
+    return this.__props['Last edited by']?.last_edited_by
   }
 }
