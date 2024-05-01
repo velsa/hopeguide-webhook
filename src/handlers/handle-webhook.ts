@@ -5,7 +5,7 @@ import { initEnv } from 'utils/init-env'
 import { writeLogsToPage } from 'utils/logs'
 import { saveToCache } from 'utils/redis-client'
 import { g } from '../utils/g'
-import { calcRelevantUntil, handleRelevantUntil } from './handle-relevant-until'
+import { handleRelevantUntil } from './handle-relevant-until'
 
 export async function handleGuideWebhook(webhookData: VacanciesResponse): Promise<void> {
   const vacs = new VacanciesDatabase({ notionSecret: g.env.NOTION_API_SECRET })
@@ -42,11 +42,7 @@ export async function handleGuideWebhook(webhookData: VacanciesResponse): Promis
   }
 
   // Update relevantUntil if the record was edited
-  if (
-    !diff.properties.updated.includes('relevantUntil') ||
-    !props.relevantUntil.start ||
-    new Date(props.relevantUntil.start) < calcRelevantUntil(props.startDate.start)
-  ) {
+  if (!props.relevantUntil.start) {
     await handleRelevantUntil(data)
   }
 
