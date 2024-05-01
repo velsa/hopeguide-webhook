@@ -42,7 +42,7 @@ export async function handleGuideWebhook(webhookData: VacanciesResponse): Promis
   }
 
   // Update relevantUntil if the record was edited
-  if (props.relevantUntil && !props.relevantUntil.start) {
+  if (!props.relevantUntil || !props.relevantUntil.start) {
     await handleRelevantUntil(data)
   }
 
