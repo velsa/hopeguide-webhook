@@ -5,10 +5,17 @@ import { g } from '../utils/g'
 export async function handleRelevantUntil(data: VacanciesResponse) {
   const db = new VacanciesDatabase({ notionSecret: g.env.NOTION_API_SECRET })
   const props = new VacanciesResponseDTO(data).properties
+
+  if (!props.startDate?.start) {
+    console.log(`${data.id} handleRelevantUntil: startDate is not set`)
+
+    return
+  }
+
   const newRelevantUntil = calcRelevantUntil(props.startDate.start)
 
   console.log(
-    `${data.id} handleRelevantUntil: change ${props.relevantUntil.start} to ${formatISO(newRelevantUntil, {
+    `${data.id} handleRelevantUntil: change ${props.relevantUntil?.start} to ${formatISO(newRelevantUntil, {
       representation: 'date',
     })}`,
   )
