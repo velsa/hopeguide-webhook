@@ -41,8 +41,8 @@ export async function handleGuideWebhook(webhookData: VacanciesResponse): Promis
     }
   }
 
-  // Update relevantUntil if the record was edited
-  if (!props.relevantUntil || !props.relevantUntil.start) {
+  // Update relevantUntil if its empty and start date is set
+  if (props.startDate.start && (!props.relevantUntil || !props.relevantUntil.start)) {
     await handleRelevantUntil(data)
   }
 
