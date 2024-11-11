@@ -7,7 +7,9 @@ DatePropertyItemObjectResponse,
 FilesPropertyItemObjectResponse,
 LastEditedByPropertyItemObjectResponse,
 LastEditedTimePropertyItemObjectResponse,
+NumberPropertyItemObjectResponse,
 RichTextPropertyItemObjectResponse,
+SelectPropertyItemObjectResponse,
 StatusPropertyItemObjectResponse,
 TitlePropertyItemObjectResponse,
 ExistencePropertyFilter,
@@ -15,8 +17,8 @@ QueryDatabaseBodyParameters,
 TimestampCreatedTimeFilter,
 TimestampLastEditedTimeFilter,
 DatePropertyFilter,
+NumberPropertyFilter,
 PeoplePropertyFilter,
-StatusPropertyFilter,
 TextPropertyFilter
 } from '../../core/types/notion-api.types'
 import { VACANCIES_PROPS_TO_IDS } from './constants'
@@ -26,8 +28,8 @@ export interface VacanciesResponse extends WithOptional<Omit<DatabaseObjectRespo
     "Время. Комментарий": RichTextPropertyItemObjectResponse,
     "Доступные даты": Omit<StatusPropertyItemObjectResponse, 'status'> & { status: { id: StringRequest, name: 'гибкие часы', color: 'yellow' } | { id: StringRequest, name: 'гибрид', color: 'blue' } | { id: StringRequest, name: 'фиксированное время', color: 'orange' }},
     "Адрес": RichTextPropertyItemObjectResponse,
-    "Срочность": Omit<StatusPropertyItemObjectResponse, 'status'> & { status: { id: StringRequest, name: '🌿 Не срочная', color: 'green' } | { id: StringRequest, name: '🔥 Срочная', color: 'orange' }},
-    "Published": Omit<StatusPropertyItemObjectResponse, 'status'> & { status: { id: StringRequest, name: 'Not reviewed', color: 'default' } | { id: StringRequest, name: 'In progress', color: 'blue' } | { id: StringRequest, name: 'Done', color: 'green' }},
+    "Актуальность": Omit<StatusPropertyItemObjectResponse, 'status'> & { status: { id: StringRequest, name: '🌿 Не срочная', color: 'green' } | { id: StringRequest, name: '🔥 Срочная', color: 'orange' }},
+    "Published": Omit<StatusPropertyItemObjectResponse, 'status'> & { status: { id: StringRequest, name: 'Not reviewed', color: 'default' } | { id: StringRequest, name: 'In progress', color: 'blue' } | { id: StringRequest, name: 'Closed', color: 'red' } | { id: StringRequest, name: 'Done', color: 'green' }},
     "Дата начала ": DatePropertyItemObjectResponse,
     "Контакт для HopeGuide": RichTextPropertyItemObjectResponse,
     "Description_ AI translation": RichTextPropertyItemObjectResponse,
@@ -38,6 +40,10 @@ export interface VacanciesResponse extends WithOptional<Omit<DatabaseObjectRespo
     "Подробное описание вакансии": RichTextPropertyItemObjectResponse,
     "Описание вакансии": TitlePropertyItemObjectResponse,
     "NoteMate logs": RichTextPropertyItemObjectResponse,
+    "Возрастное ограничение": NumberPropertyItemObjectResponse,
+    "Связано ли ваше волонтерство с религиозной организацией?": Omit<SelectPropertyItemObjectResponse, 'select'> & { select: { id: StringRequest, name: 'Да', color: 'green' } | { id: StringRequest, name: 'Нет', color: 'gray' }},
+    "Регулярность вакансии": Omit<SelectPropertyItemObjectResponse, 'select'> & { select: { id: StringRequest, name: 'Разовое волонтерство', color: 'yellow' } | { id: StringRequest, name: 'Постоянное волонтерство', color: 'green' }},
+    "Самоназвание организации (для новых организаций из анкеты))": RichTextPropertyItemObjectResponse,
     "Created by": CreatedByPropertyItemObjectResponse,
     "Редактор": LastEditedByPropertyItemObjectResponse,
     "Обновлено": LastEditedTimePropertyItemObjectResponse,
@@ -63,7 +69,7 @@ type VacanciesAvailableDatesPropertyFilter =
 
 type VacanciesAddressPropertyFilter = TextPropertyFilter
 
-export type VacanciesUrgencyPropertyType = VacanciesResponse['properties']['Срочность']['status']['name']
+export type VacanciesUrgencyPropertyType = VacanciesResponse['properties']['Актуальность']['status']['name']
 
 type VacanciesUrgencyPropertyFilter =
   | {
@@ -96,12 +102,38 @@ type VacanciesPhotoFromOrganizationPropertyFilter = ExistencePropertyFilter
 type VacanciesDetailedDescriptionPropertyFilter = TextPropertyFilter
 type VacanciesDescriptionPropertyFilter = TextPropertyFilter
 type VacanciesNoteMateLogsPropertyFilter = TextPropertyFilter
+type VacanciesVozrastnoeOgranicheniePropertyFilter = NumberPropertyFilter
+
+export type VacanciesSvyazanoLiVasheVolonterstvoSReligioznojOrganizaciejPropertyType = VacanciesResponse['properties']['Связано ли ваше волонтерство с религиозной организацией?']['select']['name']
+
+type VacanciesSvyazanoLiVasheVolonterstvoSReligioznojOrganizaciejPropertyFilter =
+  | {
+      equals: VacanciesSvyazanoLiVasheVolonterstvoSReligioznojOrganizaciejPropertyType
+    }
+  | {
+      does_not_equal: VacanciesSvyazanoLiVasheVolonterstvoSReligioznojOrganizaciejPropertyType
+    }
+  | ExistencePropertyFilter      
+
+
+export type VacanciesRegulyarnostVakansiiPropertyType = VacanciesResponse['properties']['Регулярность вакансии']['select']['name']
+
+type VacanciesRegulyarnostVakansiiPropertyFilter =
+  | {
+      equals: VacanciesRegulyarnostVakansiiPropertyType
+    }
+  | {
+      does_not_equal: VacanciesRegulyarnostVakansiiPropertyType
+    }
+  | ExistencePropertyFilter      
+
+type VacanciesSamonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnketyPropertyFilter = TextPropertyFilter
 type VacanciesCreatedByPropertyFilter = PeoplePropertyFilter
 type VacanciesEditedByPropertyFilter = PeoplePropertyFilter
 type VacanciesLastEditedTimePropertyFilter = DatePropertyFilter
 type VacanciesLastEditedByPropertyFilter = PeoplePropertyFilter
 
-export type VacanciesPropertyFilter = { timeComment: VacanciesTimeCommentPropertyFilter } | { availableDates: VacanciesAvailableDatesPropertyFilter } | { address: VacanciesAddressPropertyFilter } | { urgency: VacanciesUrgencyPropertyFilter } | { published: VacanciesPublishedPropertyFilter } | { startDate: VacanciesStartDatePropertyFilter } | { contactForHopeGuide: VacanciesContactForHopeGuidePropertyFilter } | { descriptionAiTranslation: VacanciesDescriptionAiTranslationPropertyFilter } | { relevantUntil: VacanciesRelevantUntilPropertyFilter } | { shortDescriptionAiTranslation: VacanciesShortDescriptionAiTranslationPropertyFilter } | { howToContact: VacanciesHowToContactPropertyFilter } | { photoFromOrganization: VacanciesPhotoFromOrganizationPropertyFilter } | { detailedDescription: VacanciesDetailedDescriptionPropertyFilter } | { description: VacanciesDescriptionPropertyFilter } | { noteMateLogs: VacanciesNoteMateLogsPropertyFilter } | { createdBy: VacanciesCreatedByPropertyFilter } | { editedBy: VacanciesEditedByPropertyFilter } | { lastEditedTime: VacanciesLastEditedTimePropertyFilter } | { lastEditedBy: VacanciesLastEditedByPropertyFilter }
+export type VacanciesPropertyFilter = { timeComment: VacanciesTimeCommentPropertyFilter } | { availableDates: VacanciesAvailableDatesPropertyFilter } | { address: VacanciesAddressPropertyFilter } | { urgency: VacanciesUrgencyPropertyFilter } | { published: VacanciesPublishedPropertyFilter } | { startDate: VacanciesStartDatePropertyFilter } | { contactForHopeGuide: VacanciesContactForHopeGuidePropertyFilter } | { descriptionAiTranslation: VacanciesDescriptionAiTranslationPropertyFilter } | { relevantUntil: VacanciesRelevantUntilPropertyFilter } | { shortDescriptionAiTranslation: VacanciesShortDescriptionAiTranslationPropertyFilter } | { howToContact: VacanciesHowToContactPropertyFilter } | { photoFromOrganization: VacanciesPhotoFromOrganizationPropertyFilter } | { detailedDescription: VacanciesDetailedDescriptionPropertyFilter } | { description: VacanciesDescriptionPropertyFilter } | { noteMateLogs: VacanciesNoteMateLogsPropertyFilter } | { vozrastnoeOgranichenie: VacanciesVozrastnoeOgranicheniePropertyFilter } | { svyazanoLiVasheVolonterstvoSReligioznojOrganizaciej: VacanciesSvyazanoLiVasheVolonterstvoSReligioznojOrganizaciejPropertyFilter } | { regulyarnostVakansii: VacanciesRegulyarnostVakansiiPropertyFilter } | { samonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnkety: VacanciesSamonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnketyPropertyFilter } | { createdBy: VacanciesCreatedByPropertyFilter } | { editedBy: VacanciesEditedByPropertyFilter } | { lastEditedTime: VacanciesLastEditedTimePropertyFilter } | { lastEditedBy: VacanciesLastEditedByPropertyFilter }
 
 export type VacanciesQuery = Omit<QueryDatabaseBodyParameters, 'filter' | 'sorts'> & {
   sorts?: Array<
@@ -149,6 +181,8 @@ export type VacanciesQuery = Omit<QueryDatabaseBodyParameters, 'filter' | 'sorts
     | TimestampCreatedTimeFilter
     | TimestampLastEditedTimeFilter
 }
+
+export type VacanciesQueryFilter = VacanciesQuery['filter']
 
 export type VacanciesQueryResponse = {
   results: VacanciesResponse[]

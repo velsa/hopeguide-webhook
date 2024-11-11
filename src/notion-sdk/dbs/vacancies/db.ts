@@ -23,7 +23,7 @@ export class VacanciesDatabase extends GenericDatabaseClass<
       return undefined
     }
 
-    const notionFilter = {} as any
+    const notionFilter = {} as Record<string, unknown>
 
     Object.entries(filter).forEach(([key, value]) => {
       if (key === 'and' || key === 'or') {

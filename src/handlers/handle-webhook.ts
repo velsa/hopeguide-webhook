@@ -5,7 +5,7 @@ import { initEnv } from 'utils/init-env'
 import { writeLogsToPage } from 'utils/logs'
 import { saveToCache } from 'utils/redis-client'
 import { g } from '../utils/g'
-import { handleRelevantUntil } from './handle-relevant-until'
+// import { handleRelevantUntil } from './handle-relevant-until'
 
 export async function handleGuideWebhook(webhookData: VacanciesResponse): Promise<void> {
   const vacs = new VacanciesDatabase({ notionSecret: g.env.NOTION_API_SECRET })
@@ -43,7 +43,7 @@ export async function handleGuideWebhook(webhookData: VacanciesResponse): Promis
 
   // Update relevantUntil if its empty and start date is set
   if (props.startDate?.start && (!props.relevantUntil || !props.relevantUntil.start)) {
-    await handleRelevantUntil(data)
+    // await handleRelevantUntil(data)
   }
 
   // Update the page with the logs

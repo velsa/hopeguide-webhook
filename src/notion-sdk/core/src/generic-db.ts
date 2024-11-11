@@ -1,14 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  AppendBlockChildrenParameters,
+  AppendBlockChildrenBodyParameters,
   BlockObjectRequest,
   BlockObjectResponse,
   CreatePageBodyParameters,
   ListBlockChildrenQueryParameters,
   ListBlockChildrenResponse,
+  UpdatePageBodyParameters,
 } from '../types/notion-api.types'
-import { normId, notionDatabaseQueryURL, notionPageApiURL, notionPageContentApiURL } from './notion-urls'
-import pThrottle from './p-throttle'
+import {
+  normId,
+  notionBlockApiURL,
+  notionDatabaseQueryURL,
+  notionPageApiURL,
+  notionBlockChildrenApiURL,
+} from './notion-urls'
+import pThrottle, { ThrottleConfig } from './p-throttle'
 
 export type DatabaseOptions = {
   // firebaseSecret: string
@@ -17,17 +23,34 @@ export type DatabaseOptions = {
 
 export type BlockObjectResponseWithChildren = BlockObjectResponse & { children?: BlockObjectResponseWithChildren[] }
 
-// Using simple rate limiting (https://github.com/xavi-/node-simple-rate-limiter)
-// private rateLimitedFetch = rateLimit.promise(fetch).to(3).per(1000)
-const rateLimitedFetch = pThrottle({
+const defaultRateLimitConfig: ThrottleConfig = {
+  // Environment name for the throttle, all async calls with the same env name will be throttled together
+  env: 'notion-ts-client--fetch',
   // Notion API rate limit is 3 requests per second,
   // we make it 2 to be on a safe side
   limit: 2,
   interval: 1000,
-  onDelay: () => {
-    console.log('Fetch reached interval limit, call is delayed')
-  },
-})(fetch)
+}
+let rateLimitedFetch = (logText: string) =>
+  pThrottle({
+    ...defaultRateLimitConfig,
+    onDelay: ({ delay }) => {
+      console.log(`rate limit: delayed by ${delay}ms, ${logText}`)
+    },
+  })(fetch)
+
+export function configureNotionRateLimit(config: ThrottleConfig) {
+  rateLimitedFetch = (logText: string) =>
+    pThrottle({
+      ...defaultRateLimitConfig,
+      ...config,
+      onDelay: config.onDelay
+        ? ({ delay }) => {
+            console.log(`rate limit: delayed by ${delay}ms, ${logText}`)
+          }
+        : undefined,
+    })(fetch)
+}
 
 export abstract class GenericDatabaseClass<
   DatabaseResponse,
@@ -93,7 +116,8 @@ export abstract class GenericDatabaseClass<
       sorts: this.queryRemapSorts(query['sorts']),
     }
     // console.log('Querying Notion database with:', JSON.stringify(notionQuery, null, 2))
-    const res: any = await rateLimitedFetch(
+    const rateLimitedQuery = await rateLimitedFetch('query')
+    const res = await rateLimitedQuery(
       notionDatabaseQueryURL(this.notionDatabaseId, this.queryRemapFilterProperties(filterProps)),
       {
         method: 'POST',
@@ -103,20 +127,21 @@ export abstract class GenericDatabaseClass<
     )
 
     if (!res.ok) {
-      console.error('Query:\n', query, 'Response:\n', await res.json())
+      console.error('Query:', query, '\nResponse:', await res.json())
       throw new Error(
         `query: failed to query database ${normId(this.notionDatabaseId)}\n${res.status} ${res.statusText}`,
       )
     }
 
-    return await res.json()
+    return (await res.json()) as DatabaseQueryResponse
   }
 
   /**
    * Get a page from the Notion database
    *
    * @param id - Notion page id
-   * @returns - Notion page data with properties. Use your custom DTO type to parse the data.
+   * @returns - Notion page data with page meta and properties.
+   * Use your custom DTO type to parse the data.
    *
    * @example
    * const pageResponse = await db.getPage('70b2b25b7f434306b5089486de5efced')
@@ -125,7 +150,8 @@ export abstract class GenericDatabaseClass<
    * console.log(page.properties.title)
    */
   async getPage(id: string): Promise<DatabaseResponse> {
-    const res: any = await rateLimitedFetch(notionPageApiURL(id), {
+    const rateLimitedGetPage = await rateLimitedFetch(`getPage(${id})`)
+    const res = await rateLimitedGetPage(notionPageApiURL(id), {
       method: 'GET',
       headers: this.notionApiHeaders,
     })
@@ -133,18 +159,21 @@ export abstract class GenericDatabaseClass<
     if (!res.ok) {
       console.error(await res.json())
       throw new Error(
-        `getPage: failed to get metadata. Page id: ${normId(id)}, Database id: ${normId(this.notionDatabaseId)}.\n${res.status} ${res.statusText}`,
+        `getPage: failed to get metadata. Page id: ${normId(id)}, Database id: ${normId(
+          this.notionDatabaseId,
+        )}.\n${res.status} ${res.statusText}`,
       )
     }
 
-    return await res.json()
+    return (await res.json()) as DatabaseResponse
   }
 
   /**
    * Update a page in the Notion database
    *
    * @param id - Notion page id
-   * @param patch - Patch data. Use your custom DTO type to create the patch data.
+   * @param patch - Patch data for page cover, icon and properties.
+   * Use your custom DTO type to create the patch data.
    *
    * @example
    * const patch = new MyDatabasePatchDTO({
@@ -155,21 +184,25 @@ export abstract class GenericDatabaseClass<
    *
    * await db.updatePage('70b2b25b7f434306b5089486de5efced', patch)
    */
-  async updatePage(id: string, patch: DatabasePatchDTO): Promise<DatabaseResponse> {
-    const res: any = await rateLimitedFetch(notionPageApiURL(id), {
+  async updatePage(id: string, patch: DatabasePatchDTO | UpdatePageBodyParameters): Promise<DatabaseResponse> {
+    const rateLimitedUpdatePage = await rateLimitedFetch(`updatePage(${id})`)
+    const data = '__data' in patch ? patch.__data : patch
+    const res = await rateLimitedUpdatePage(notionPageApiURL(id), {
       method: 'PATCH',
       headers: this.notionApiHeaders,
-      body: JSON.stringify(patch.__data),
+      body: JSON.stringify(data),
     })
 
     if (!res.ok) {
       console.error(await res.json())
       throw new Error(
-        `updatePage: failed to update metadata. Page id: ${normId(id)}, Database id: ${normId(this.notionDatabaseId)}.\n ${res.status} ${res.statusText}`,
+        `updatePage: failed to update metadata. Page id: ${normId(id)}, Database id: ${normId(
+          this.notionDatabaseId,
+        )}.\n ${res.status} ${res.statusText}`,
       )
     }
 
-    return await res.json()
+    return (await res.json()) as DatabaseResponse
   }
 
   /**
@@ -192,11 +225,13 @@ export abstract class GenericDatabaseClass<
     meta: DatabasePatchDTO | CreatePageBodyParameters,
     content?: BlockObjectRequest[],
   ): Promise<DatabaseResponse> {
-    const res: any = await rateLimitedFetch(notionPageApiURL(), {
+    const data = '__data' in meta ? meta.__data : meta
+    const rateLimitedCreatePage = await rateLimitedFetch(`createPage`)
+    const res = await rateLimitedCreatePage(notionPageApiURL(), {
       method: 'POST',
       headers: this.notionApiHeaders,
       body: JSON.stringify({
-        ...('__data' in meta ? meta.__data : meta),
+        ...data,
         parent: { database_id: this.notionDatabaseId },
         children: content && content.length > 0 ? content : undefined,
       }),
@@ -209,7 +244,7 @@ export abstract class GenericDatabaseClass<
       )
     }
 
-    return await res.json()
+    return (await res.json()) as DatabaseResponse
   }
 
   /**
@@ -225,7 +260,8 @@ export abstract class GenericDatabaseClass<
    * await db.archivePage('70b2b25b7f434306b5089486de5efced')
    */
   async archivePage(id: string): Promise<DatabaseResponse> {
-    const res: any = await rateLimitedFetch(notionPageApiURL(id), {
+    const rateLimitedArchivePage = await rateLimitedFetch(`archivePage(${id})`)
+    const res = await rateLimitedArchivePage(notionPageApiURL(id), {
       method: 'PATCH',
       headers: this.notionApiHeaders,
       body: JSON.stringify({ archived: true }),
@@ -238,11 +274,11 @@ export abstract class GenericDatabaseClass<
       )
     }
 
-    return await res.json()
+    return (await res.json()) as DatabaseResponse
   }
 
   /**
-   * Create a page in the Notion database
+   * Append content to a page or block in the Notion database
    *
    * @param id - Page or block id
    * @param content - Page content – Notion blocks. See Notion API documentation for the block format.
@@ -254,13 +290,15 @@ export abstract class GenericDatabaseClass<
   async appendBlockChildren(
     id: string,
     content: BlockObjectRequest[],
-    opts?: AppendBlockChildrenParameters,
+    opts?: Omit<AppendBlockChildrenBodyParameters, 'children'>,
   ): Promise<ListBlockChildrenResponse> {
-    const res: any = await rateLimitedFetch(notionPageContentApiURL(id, opts), {
+    const rateLimitedAppendBlockChildren = await rateLimitedFetch(`appendBlockChildren(${id})`)
+    const res = await rateLimitedAppendBlockChildren(notionBlockChildrenApiURL(id), {
       method: 'PATCH',
       headers: this.notionApiHeaders,
       body: JSON.stringify({
         children: content && content.length > 0 ? content : undefined,
+        after: opts?.after
       }),
     })
 
@@ -271,7 +309,82 @@ export abstract class GenericDatabaseClass<
       )
     }
 
-    return await res.json()
+    return (await res.json()) as ListBlockChildrenResponse
+  }
+
+  /**
+   * Update content of a page or a block in the Notion database
+   * Recursively updates blocks content if it is different from existing content.
+   *
+   * @param id - Page or block id
+   * @param content - Page content – Notion blocks. See Notion API documentation for the block format.
+   * This functions supports children property in the block object to update nested blocks.
+   *
+   * @example
+   *
+   * await db.updateBlockChildren(pageId, content)
+   */
+  async updateBlockChildren(
+    id: string,
+    content: (BlockObjectRequest & { children?: BlockObjectRequest[] })[],
+  ): Promise<Array<BlockObjectResponseWithChildren>> {
+    const blocks = await this.getPageBlocks(id)
+
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i] as BlockObjectResponseWithChildren
+      const updateBlock = content[i] as BlockObjectRequest
+      const blockContent = block[block.type as keyof BlockObjectResponseWithChildren] as unknown
+      const { children: updateBlockChildren, ...updateBlockContent } = (updateBlock[
+        updateBlock.type as keyof BlockObjectRequest
+      ] || {}) as { children?: BlockObjectRequest[] }
+
+      if (!updateBlock || !updateBlockContent) {
+        await this.archiveBlock(block.id)
+        continue
+      }
+
+      if (block.type !== updateBlock.type) {
+        await this.appendBlockChildren(id, [updateBlock], { after: block.id })
+        await this.archiveBlock(block.id)
+        continue
+      }
+
+      if (JSON.stringify(blockContent) !== JSON.stringify(updateBlockContent)) {
+        delete (updateBlockContent as BlockObjectRequest)['type']
+
+        const rateLimitedUpdateBlock = await rateLimitedFetch(`updateBlock(${id})`)
+        const res = await rateLimitedUpdateBlock(notionBlockApiURL(block.id), {
+          method: 'PATCH',
+          headers: this.notionApiHeaders,
+          body: JSON.stringify({ [updateBlock.type]: updateBlockContent }),
+        })
+
+        if (!res.ok) {
+          console.error(await res.json())
+          throw new Error(
+            `updateBlockChildren: failed for database ${normId(this.notionDatabaseId)}.\n${res.status} ${
+              res.statusText
+            }`,
+          )
+        }
+      }
+
+      if (block.has_children) {
+        if (!updateBlockChildren || updateBlockChildren.length === 0) {
+          const children = await this.getPageBlocks(block.id)
+          const archiveChildren = children.map(async (child) => {
+            await this.archiveBlock(child.id)
+          })
+
+          await Promise.all(archiveChildren)
+          continue
+        }
+
+        await this.updateBlockChildren(block.id, updateBlockChildren)
+      }
+    }
+
+    return await this.getPageBlocks(id)
   }
 
   /**
@@ -288,13 +401,13 @@ export abstract class GenericDatabaseClass<
    *
    * console.log(blocks[0].has_children)
    */
-  async getPageBlocks(id: string): Promise<Array<BlockObjectResponseWithChildren>> {
+  async getPageBlocks(id: string, opts: ListBlockChildrenQueryParameters = { page_size: 100 }): Promise<Array<BlockObjectResponseWithChildren>> {
     const blocks: BlockObjectResponseWithChildren[] = []
-    const opts: ListBlockChildrenQueryParameters = { page_size: 100 }
     let listHasMore = false
+    const rateLimitedGetPageBlocks = await rateLimitedFetch(`getPageBlocks(${id})`)
 
     do {
-      const res: any = await rateLimitedFetch(notionPageContentApiURL(id, opts), {
+      const res = await rateLimitedGetPageBlocks(notionBlockChildrenApiURL(id, opts), {
         method: 'GET',
         headers: this.notionApiHeaders,
       })
@@ -302,7 +415,9 @@ export abstract class GenericDatabaseClass<
       if (!res.ok) {
         console.error(await res.json())
         throw new Error(
-          `getPageBlocks: failed to get page content. Page Id: ${normId(id)}, Database id: ${normId(this.notionDatabaseId)}.\n${res.status} ${res.statusText}`,
+          `getPageBlocks: failed to get page content. Page Id: ${normId(id)}, Database id: ${normId(
+            this.notionDatabaseId,
+          )}.\n${res.status} ${res.statusText}`,
         )
       }
 
@@ -321,6 +436,33 @@ export abstract class GenericDatabaseClass<
     } while (listHasMore)
 
     return blocks
+  }
+
+  /**
+   * Archive a block in the Notion page or inside another block.
+   * Archived blocks are not deleted, but are moved to Trash.
+   *
+   * @param id - Notion block id
+   *
+   * @example
+   *
+   * await db.archiveBlock('70b2b25b7f434306b5089486de5efced', { recursive: true })
+   */
+  async archiveBlock(id: string): Promise<BlockObjectResponseWithChildren> {
+    const rateLimitedArchiveBlock = await rateLimitedFetch(`archiveBlock(${id})`)
+    const res = await rateLimitedArchiveBlock(notionBlockApiURL(id), {
+      method: 'DELETE',
+      headers: this.notionApiHeaders,
+    })
+
+    if (!res.ok) {
+      console.error(await res.json())
+      throw new Error(
+        `archiveBlock: failed. Block id: ${normId(id)}, Database id: ${normId(this.notionDatabaseId)}.\n${res.status} ${res.statusText}`,
+      )
+    }
+
+    return (await res.json()) as BlockObjectResponseWithChildren
   }
 
   // TODO: This is NoteMate Logic. Move it there!

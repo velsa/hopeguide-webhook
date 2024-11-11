@@ -11,7 +11,16 @@ export const VACANCIES_PROP_VALUES = {
 "published": [
   "Not reviewed",
   "In progress",
+  "Closed",
   "Done"
+] as const,
+"svyazanoLiVasheVolonterstvoSReligioznojOrganizaciej": [
+  "Да",
+  "Нет"
+] as const,
+"regulyarnostVakansii": [
+  "Разовое волонтерство",
+  "Постоянное волонтерство"
 ] as const,
 }
 
@@ -31,6 +40,10 @@ export const VACANCIES_PROPS_TO_IDS = {
   "detailedDescription": "zk~U",
   "description": "title",
   "noteMateLogs": "N%7Db%5E",
+  "vozrastnoeOgranichenie": "Jg%5Cx",
+  "svyazanoLiVasheVolonterstvoSReligioznojOrganizaciej": "MMOG",
+  "regulyarnostVakansii": "raVb",
+  "samonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnkety": "vR%60%3A",
   "createdBy": "U_FE",
   "editedBy": "d%3FC%5E",
   "lastEditedTime": "oOFV",
@@ -52,6 +65,10 @@ export const VACANCIES_IDS_TO_PROPS = {
   "zk~U": "detailedDescription",
   "title": "description",
   "N%7Db%5E": "noteMateLogs",
+  "Jg%5Cx": "vozrastnoeOgranichenie",
+  "MMOG": "svyazanoLiVasheVolonterstvoSReligioznojOrganizaciej",
+  "raVb": "regulyarnostVakansii",
+  "vR%60%3A": "samonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnkety",
   "U_FE": "createdBy",
   "d%3FC%5E": "editedBy",
   "oOFV": "lastEditedTime",
@@ -73,6 +90,10 @@ export const VACANCIES_PROPS_TO_TYPES = {
   "detailedDescription": "rich_text",
   "description": "title",
   "noteMateLogs": "rich_text",
+  "vozrastnoeOgranichenie": "number",
+  "svyazanoLiVasheVolonterstvoSReligioznojOrganizaciej": "select",
+  "regulyarnostVakansii": "select",
+  "samonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnkety": "rich_text",
   "createdBy": "created_by",
   "editedBy": "last_edited_by",
   "lastEditedTime": "last_edited_time",

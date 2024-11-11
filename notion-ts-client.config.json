@@ -11,6 +11,10 @@
     {
       "name": "DB - Подписки на уведомления",
       "id": "139c71e3-ba5a-4a97-9479-83661b4ce073"
+    },
+    {
+      "name": "DB - Организаторы мероприятий",
+      "id": "f4f446d8-d431-435d-bdc0-6de7e93cfdb9"
     }
   ],
   "databases": {
@@ -38,7 +42,7 @@
           "readOnly": false
         },
         "DGzD": {
-          "_name": "Срочность",
+          "_name": "Актуальность",
           "_type": "status",
           "varName": "urgency",
           "readOnly": false
@@ -107,6 +111,30 @@
           "_name": "NoteMate logs",
           "_type": "rich_text",
           "varName": "noteMateLogs",
+          "readOnly": false
+        },
+        "Jg%5Cx": {
+          "_name": "Возрастное ограничение",
+          "_type": "number",
+          "varName": "vozrastnoeOgranichenie",
+          "readOnly": false
+        },
+        "MMOG": {
+          "_name": "Связано ли ваше волонтерство с религиозной организацией?",
+          "_type": "select",
+          "varName": "svyazanoLiVasheVolonterstvoSReligioznojOrganizaciej",
+          "readOnly": false
+        },
+        "raVb": {
+          "_name": "Регулярность вакансии",
+          "_type": "select",
+          "varName": "regulyarnostVakansii",
+          "readOnly": false
+        },
+        "vR%60%3A": {
+          "_name": "Самоназвание организации (для новых организаций из анкеты))",
+          "_type": "rich_text",
+          "varName": "samonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnkety",
           "readOnly": false
         },
         "U_FE": {

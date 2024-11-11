@@ -55,8 +55,8 @@ export class VacanciesResponseDTO {
 }
   
 export class VacanciesPropertiesResponseDTO {
-  private __props: VacanciesResponse['properties']
-  private __data
+  __props: VacanciesResponse['properties']
+  __data
 
   constructor(props: VacanciesResponse['properties']) {
     this.__props = props
@@ -64,7 +64,7 @@ export class VacanciesPropertiesResponseDTO {
       timeComment: this.__props['Время. Комментарий'],
       availableDates: this.__props['Доступные даты'],
       address: this.__props['Адрес'],
-      urgency: this.__props['Срочность'],
+      urgency: this.__props['Актуальность'],
       published: this.__props['Published'],
       startDate: this.__props['Дата начала '],
       contactForHopeGuide: this.__props['Контакт для HopeGuide'],
@@ -76,6 +76,10 @@ export class VacanciesPropertiesResponseDTO {
       detailedDescription: this.__props['Подробное описание вакансии'],
       description: this.__props['Описание вакансии'],
       noteMateLogs: this.__props['NoteMate logs'],
+      vozrastnoeOgranichenie: this.__props['Возрастное ограничение'],
+      svyazanoLiVasheVolonterstvoSReligioznojOrganizaciej: this.__props['Связано ли ваше волонтерство с религиозной организацией?'],
+      regulyarnostVakansii: this.__props['Регулярность вакансии'],
+      samonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnkety: this.__props['Самоназвание организации (для новых организаций из анкеты))'],
       createdBy: this.__props['Created by'],
       editedBy: this.__props['Редактор'],
       lastEditedTime: this.__props['Обновлено'],
@@ -105,7 +109,7 @@ export class VacanciesPropertiesResponseDTO {
   }
 
   get urgency() {
-    return this.__props['Срочность']?.status
+    return this.__props['Актуальность']?.status
   }
 
   get published() {
@@ -177,6 +181,26 @@ export class VacanciesPropertiesResponseDTO {
       text: this.__props['NoteMate logs']?.rich_text ? this.__props['NoteMate logs'].rich_text.reduce((acc, item) => acc + item.plain_text, '') : undefined,
       links: this.__props['NoteMate logs']?.rich_text ? this.__props['NoteMate logs'].rich_text.filter((item) => item.href?.length).map((item) => item.href) : [],
       rich_text: this.__props['NoteMate logs']?.rich_text,
+    }
+  }
+
+  get vozrastnoeOgranichenie() {
+    return this.__props['Возрастное ограничение']?.number
+  }
+
+  get svyazanoLiVasheVolonterstvoSReligioznojOrganizaciej() {
+    return this.__props['Связано ли ваше волонтерство с религиозной организацией?']?.select
+  }
+
+  get regulyarnostVakansii() {
+    return this.__props['Регулярность вакансии']?.select
+  }
+
+  get samonazvanieOrganizaciiDlyaNovyhOrganizacijIzAnkety() {
+    return {
+      text: this.__props['Самоназвание организации (для новых организаций из анкеты))']?.rich_text ? this.__props['Самоназвание организации (для новых организаций из анкеты))'].rich_text.reduce((acc, item) => acc + item.plain_text, '') : undefined,
+      links: this.__props['Самоназвание организации (для новых организаций из анкеты))']?.rich_text ? this.__props['Самоназвание организации (для новых организаций из анкеты))'].rich_text.filter((item) => item.href?.length).map((item) => item.href) : [],
+      rich_text: this.__props['Самоназвание организации (для новых организаций из анкеты))']?.rich_text,
     }
   }
 
